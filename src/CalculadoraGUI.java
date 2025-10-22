@@ -18,17 +18,21 @@ public class CalculadoraGUI extends JFrame{
             conta.setEditable(false);
             add(conta, BorderLayout.NORTH);
 
-            JPanel painel = new JPanel();
-            for (int i = 0; i < 10 ; i++) {
+            JPanel painel = new JPanel(new GridLayout(4, 3, 5, 5));
+            for (int i = 9; i >0 ; i--) {
                 painel.add(CriarBotaoNumero(String.valueOf(i)));
             }
-
-            painel.add(CriarBotaoOper("+", 0));
-            painel.add(CriarBotaoOper("-", 1));
-            painel.add(CriarBotaoOper("*", 2));
-            painel.add(CriarBotaoOper("/", 3));
+            JPanel paineloper = new JPanel( new GridLayout(4,1, 5, 5));
+            paineloper.add(CriarBotaoOper("+", 0));
+            paineloper.add(CriarBotaoOper("-", 1));
+            paineloper.add(CriarBotaoOper("*", 2));
+            paineloper.add(CriarBotaoOper("/", 3));
+            painel.add(CriarBotaoVoltar());
+            painel.add(CriarBotaoNumero("0"));
             painel.add(CriarBotaoigual());
             add(painel, BorderLayout.CENTER);
+            add(paineloper, BorderLayout.EAST);
+
         }
 
 
@@ -36,16 +40,6 @@ public class CalculadoraGUI extends JFrame{
         private JButton CriarBotaoNumero(String texto)
         {
             JButton btn = new JButton(texto);
-            if (texto == "0") {
-                btn.setBounds(125 , 400, 50, 50);
-            } else {
-                btn.setBounds(75 + (dis * 50), 350-(linha*50), 50, 50);
-                dis++;
-                if (dis%3==0){
-                    linha++;
-                    dis=0;
-                }
-            }
             btn.addActionListener(e -> {
 
                 valorAtual.append(texto);
@@ -72,7 +66,7 @@ public class CalculadoraGUI extends JFrame{
                 if (valorAtual.isEmpty()) return;
                 segundoValor = Integer.parseInt(valorAtual.toString());
                 valorAtual.setLength(0);
-                int resultado = 0;
+                float resultado = 0;
                 try {
                     switch (operacao) {
                         case 0 -> resultado=calc.somar(primeiroValor,segundoValor);
@@ -81,7 +75,7 @@ public class CalculadoraGUI extends JFrame{
                         case 3 -> resultado=calc.div(primeiroValor,segundoValor);
                     }
                     conta.setText(String.valueOf(resultado));
-                    primeiroValor = resultado;
+                    primeiroValor = (int) resultado;
                     valorAtual.setLength(0);
                 } catch (ArithmeticException ex) {
                     conta.setText("Erro: " + ex.getMessage());
@@ -90,7 +84,16 @@ public class CalculadoraGUI extends JFrame{
             });
             return btdi;
         }
-
-}
+        private JButton CriarBotaoVoltar () {
+            JButton btnv = new JButton("<");
+            btnv.addActionListener( e -> {
+                if (!valorAtual.isEmpty()){
+                    valorAtual.delete(valorAtual.length()-1,valorAtual.length());
+                    conta.setText(valorAtual.toString());
+                };
+        });
+            return btnv;
+        }
+    }
 
 
